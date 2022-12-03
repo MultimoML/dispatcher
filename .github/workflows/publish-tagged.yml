@@ -2,7 +2,7 @@ name: Build a tagged Docker image and publish it
 
 on:
   push:
-    branches-ignore: [main]
+    branches: [main]
 
 jobs:
   build:

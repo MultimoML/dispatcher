@@ -13,7 +13,7 @@ FROM gcr.io/distroless/static-debian11:latest
 
 COPY --from=build /dispatcher /dispatcher
 
-ENV PORT=6000
+ENV PORT=6001
 EXPOSE $PORT
 
 ENTRYPOINT ["/dispatcher"]

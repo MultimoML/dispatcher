@@ -17,9 +17,9 @@ run: ## Runs the microservice
 
 build: ## Builds the Docker image
     ifeq (, $(shell groups | grep docker))
-		sudo docker build -t multimoml/extractor-timer:latest .
+		sudo docker build -t multimoml/dispatcher:latest .
     else
-		docker build -t multimoml/extractor-timer:latest .
+		docker build -t multimoml/dispatcher:latest .
     endif
 
 compose: ## Deploy the microservice using Docker Compose

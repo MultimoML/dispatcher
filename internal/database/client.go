@@ -7,6 +7,8 @@ import (
 	"os"
 	"sync"
 
+	"go.mongodb.org/mongo-driver/bson"
+
 	"github.com/multimoml/dispatcher/internal/model"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -43,21 +45,17 @@ func Connect(ctx context.Context) *mongo.Client {
 	return dbClient
 }
 
-func Collection(_ context.Context, client *mongo.Client, name string) *mongo.Collection {
-	return client.Database(os.Getenv("DATABASE")).Collection(name)
-}
-
 func Products(ctx context.Context) []model.Product {
-	productCollection := Collection(ctx, dbClient, "extractor-timer")
+	productCollection := dbClient.Database(os.Getenv("DATABASE")).Collection("spar")
 
-	var products []model.Product
-	cursor, err := productCollection.Find(ctx, nil)
+	cursor, err := productCollection.Find(ctx, bson.D{})
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("Failed to find products in database: ", err)
 	}
 
+	var products []model.Product
 	if err = cursor.All(ctx, &products); err != nil {
-		log.Fatal(err)
+		log.Fatal("Failed to save products into struct: ", err)
 	}
 
 	return products
