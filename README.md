@@ -2,6 +2,9 @@
 
 Microservice for managing grocery items.
 
+Available endpoints:
+- `/products`: returns a list of products
+
 ## Setup/installation
 
 To run the microservice using Docker Compose run `make compose`.
