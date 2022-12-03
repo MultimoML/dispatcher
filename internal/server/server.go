@@ -27,9 +27,9 @@ func Run(ctx context.Context) {
 	router := httprouter.New()
 
 	// Endpoints
-	router.GET("/live", Liveliness)
-	router.GET("/ready", Readiness)
-	router.GET("/v1/all", AllProducts)
+	router.GET("/products/live", Liveliness)
+	router.GET("/products/ready", Readiness)
+	router.GET("/products/v1/all", AllProducts)
 
 	log.Fatal(http.ListenAndServe(":6001", router))
 }
