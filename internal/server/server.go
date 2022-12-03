@@ -23,7 +23,7 @@ func Run(ctx context.Context) {
 	router := httprouter.New()
 
 	// Endpoints
-	router.GET("/products", Products)
+	router.GET("/v1/products", Products)
 
 	log.Fatal(http.ListenAndServe(":6001", router))
 }
