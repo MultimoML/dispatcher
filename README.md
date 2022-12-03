@@ -3,7 +3,9 @@
 Microservice for managing grocery items.
 
 Available endpoints:
-- `/products`: returns a list of products
+- `/live`: Liveliness check
+- `/ready`: Readiness check
+- `/v1/all`: Returns a list of all products
 
 Branches:
 - `main`: Contains stable, tagged releases
