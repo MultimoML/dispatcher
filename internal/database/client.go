@@ -9,9 +9,10 @@ import (
 
 	"go.mongodb.org/mongo-driver/bson"
 
-	"github.com/multimoml/dispatcher/internal/model"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+
+	"github.com/multimoml/dispatcher/internal/model"
 )
 
 var dbClient *mongo.Client

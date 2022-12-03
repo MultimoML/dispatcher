@@ -3,14 +3,14 @@ version: '3'
 services:
 
   dispatcher:
-    image: ghcr.io/multimoml/dispatcher:latest
+    image: multimoml/dispatcher:latest
     container_name: dispatcher
     restart: unless-stopped
     networks:
-      - dispatcher
+      - products-db
       - traefik-proxy
-    #ports:
-    #  - 6001:6001
+#    ports:
+#      - "6001:6001"
     environment:
 
       # MongoDB
@@ -20,7 +20,7 @@ services:
 
       # Dispatcher
       ENVIRONMENT: "prod"
-      M_SERVER: extractor-timer-mongo:27017
+      M_SERVER: products-db:27017
       RUN_INTERVAL: 14400 # 4h in seconds
       PORT: 6001
     labels:
@@ -31,7 +31,7 @@ services:
       traefik.http.services.extractor-timer.loadbalancer.server.port: 6001
 
 networks:
-  dispatcher:
+  products-db:
     external: true
   traefik-proxy:
     external: true

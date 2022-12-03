@@ -8,6 +8,7 @@ import (
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"
+
 	"github.com/multimoml/dispatcher/internal/config"
 	"github.com/multimoml/dispatcher/internal/database"
 )
