@@ -3,7 +3,6 @@ package server
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 
@@ -24,16 +23,9 @@ func Run(ctx context.Context) {
 	router := httprouter.New()
 
 	// Endpoints
-	router.GET("/", Index)
 	router.GET("/products", Products)
 
 	log.Fatal(http.ListenAndServe(":6001", router))
-}
-
-func Index(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
-	if _, err := fmt.Fprint(w, "You should call the /products endpoint\n"); err != nil {
-		log.Println(err)
-	}
 }
 
 func Products(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
