@@ -35,8 +35,7 @@ tag: ## Updates the project version and creates a Git tag with a changelog
     ifndef ver
 		git tag -l
     else
-		sed -i 's/tags: ghcr.io\/multimoml\/dispatcher.*/tags: ghcr.io\/multimoml\/dispatcher:v'$(ver)'/' \
-			.github/workflows/publish-tagged.yml
+		sed -i 's/:v[0-9.]*/:v'$(ver)'/' .github/workflows/publish-tagged.yml
 
 		# Commit all changed files
 		git add .
