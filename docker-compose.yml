@@ -26,7 +26,7 @@ services:
     labels:
       traefik.enable: true
       traefik.docker.network: traefik-proxy # needed if you have multiple networks and no default
-      traefik.http.routers.dispatcher.rule: Host(`${DOMAIN}`) && PathPrefix(`/products`)
+      traefik.http.routers.dispatcher.rule: Host(`${DOMAIN}`) && PathPrefix(`/products/`)
       traefik.http.routers.dispatcher.entrypoints: https
       traefik.http.services.dispatcher.loadbalancer.server.port: 6001
 
