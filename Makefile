@@ -1,6 +1,6 @@
 ver =
 
-all: help
+all: build
 
 .PHONY: help run build compose build-deploy tag release
 
@@ -13,9 +13,9 @@ help: ## Prints the help menu
 
 
 run: ## Runs the microservice
-	ENVIRONMENT=dev go run cmd/server/main.go
+	go run cmd/server/main.go
 
-build: ## Builds the Docker image
+build: tidy ## Builds the Docker image
     ifeq (, $(shell groups | grep docker))
 		sudo docker build -t multimoml/dispatcher:latest .
     else
@@ -47,6 +47,9 @@ tag: ## Updates the project version and creates a Git tag with a changelog
 		git tag -asF changelog.txt v$(ver)
 		rm changelog.txt
     endif
+
+tidy: ## Update dependencies
+	go mod tidy
 
 release: tag ## Create a new release and push it
 	git push --follow-tags

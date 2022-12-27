@@ -2,12 +2,10 @@ package server
 
 import (
 	"context"
-	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 
-	"github.com/julienschmidt/httprouter"
+	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/mongo"
 
 	"github.com/multimoml/dispatcher/internal/config"
@@ -18,51 +16,34 @@ var dbClient *mongo.Client
 
 func Run(ctx context.Context) {
 	// Load environment variables
-	config.Environment()
+	dbConfig := config.LoadConfig()
 
 	// Connect to MongoDB
-	dbClient = database.Connect(ctx)
+	dbClient = database.Connect(ctx, dbConfig)
 
 	// Start HTTP server
-	router := httprouter.New()
+	router := gin.Default()
 
 	// Endpoints
-	router.GET("/products/live", Liveliness)
+	router.GET("/products/live", Liveness)
 	router.GET("/products/ready", Readiness)
 	router.GET("/products/v1/all", AllProducts)
 
-	log.Fatal(http.ListenAndServe(":6001", router))
+	log.Fatal(router.Run("localhost:6001"))
 }
 
-func Liveliness(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
-	w.WriteHeader(http.StatusOK)
-	if _, err := fmt.Fprint(w, "I'm alive!\n"); err != nil {
-		log.Println(err)
-	}
+func Liveness(c *gin.Context) {
+	c.IndentedJSON(http.StatusOK, gin.H{"status": "alive"})
 }
 
-func Readiness(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
+func Readiness(c *gin.Context) {
 	if err := dbClient.Ping(context.TODO(), nil); err != nil {
-		w.WriteHeader(http.StatusServiceUnavailable)
-		if _, err = fmt.Fprint(w, "I'm NOT ready!\n"); err != nil {
-			log.Println(err)
-		}
+		c.IndentedJSON(http.StatusServiceUnavailable, gin.H{"status": "not ready"})
 	} else {
-		w.WriteHeader(http.StatusOK)
-		if _, err = fmt.Fprint(w, "I'm ready!\n"); err != nil {
-			log.Println(err)
-		}
+		c.IndentedJSON(http.StatusOK, gin.H{"status": "ready"})
 	}
 }
 
-func AllProducts(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
-	products := database.Products(context.TODO())
-
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-
-	err := json.NewEncoder(w).Encode(products)
-	if err != nil {
-		log.Fatal("Failed to encode products into JSON")
-	}
+func AllProducts(c *gin.Context) {
+	c.IndentedJSON(http.StatusOK, database.Products(context.TODO()))
 }

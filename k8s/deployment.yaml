@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dispatcher-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dispatcher
+  template:
+    metadata:
+      labels:
+        app: dispatcher
+    spec:
+      containers:
+      - name: dispatcher
+        image: dispatcher:latest
+        env:
+        - name: DB_USERNAME
+          value: rso
+        - name: DB_HOST
+          value: mongodb+srv://prod-ed05eaf0.mongo.ondigitalocean.com
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: db-password
+              key: DB_PASSWORD
+        ports:
+        - containerPort: 6001
+          name: server
+          protocol: TCP
+        livenessProbe:
+          httpGet:
+            path: /products/live
+            port: server
+          initialDelaySeconds: 10
+          periodSeconds: 3
+        readinessProbe:
+          httpGet:
+            path: /products/ready
+            port: server
+          initialDelaySeconds: 10
+          periodSeconds: 3
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: dispatcher
+spec:
+  type: ClusterIP
+  ports:
+  - port: 6001
+    targetPort: server
+selector:
+  app: dispatcher
