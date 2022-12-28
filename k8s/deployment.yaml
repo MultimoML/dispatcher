@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: dispatcher-deployment
+  name: dispatcher
 spec:
   replicas: 1
   selector:
@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: dispatcher
-        image: dispatcher:latest
+        image: ghcr.io/multimoml/dispatcher:latest
         env:
         - name: ACTIVE_ENV
           value: "prod"

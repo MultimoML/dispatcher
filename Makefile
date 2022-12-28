@@ -15,10 +15,16 @@ server: ## Run the microservice locally
 	go run cmd/dispatcher/main.go
 
 run: build ## Run the microservice in a container
-	docker run -p 6001:6001 -v $(shell pwd)/.env:/.env -d multimoml/dispatcher:latest
+	docker run -p 6001:6001 -v $(shell pwd)/.env:/.env -d ghcr.io/multimoml/dispatcher:latest
 
 build: tidy ## Build the Docker image
-	docker build -t multimoml/dispatcher:latest .
+	docker build -t ghcr.io/multimoml/dispatcher:latest .
+
+push: build ## Manually push the Docker image
+	docker push ghcr.io/multimoml/dispatcher:latest
+
+deploy: push ## Manually deploy the microservice to the Kubernetes cluster
+	kubectl apply -f k8s/deployment.yaml
 
 tag: ## Update the project version and create a Git tag with a changelog
     ifndef ver
