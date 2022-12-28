@@ -26,8 +26,14 @@ Prerequisites:
 - [Go](https://go.dev/)
 - [Docker](https://www.docker.com/)
 
-To run the microservice run `make run`.
-To see all the available options run `make help`.
+Example usage:
+- See all available options: `make help`
+- Run microservice in a container: `make run`
+- Release a new version: `make release ver=x.y.z`
+
+All work should be done on `main`, `prod` should never be checked out or manually edited.
+When releasing, the changes are merged into `prod` and both branches are pushed.
+A GitHub Action workflow will then build and publish the image to GHCR, and deploy it to Kubernetes.
 
 ## License
 
