@@ -28,4 +28,4 @@ jobs:
         with:
           file: ./Dockerfile
           push: true
-          tags: ghcr.io/multimoml/dispatcher:v1.0.5,ghcr.io/multimoml/dispatcher:latest
+          tags: ghcr.io/multimoml/dispatcher:v1.0.6,ghcr.io/multimoml/dispatcher:latest
