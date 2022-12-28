@@ -15,7 +15,7 @@ server: ## Run the microservice locally
 	go run cmd/dispatcher/main.go
 
 run: build ## Run the microservice in a container
-	docker run -p 6001:6001 -v $(shell pwd)/.env:/.env -it multimoml/dispatcher:latest
+	docker run -p 6001:6001 -v $(shell pwd)/.env:/.env -d multimoml/dispatcher:latest
 
 build: tidy ## Build the Docker image
 	docker build -t multimoml/dispatcher:latest .
