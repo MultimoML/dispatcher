@@ -17,8 +17,8 @@ Available query parameters:
 - `category`: Filter by category name
 
 Branches:
-- `main`: Contains stable, tagged releases
-- `dev`: Contains latest development version
+- `main`: Contains latest development version
+- `prod`: Contains stable, tagged releases
 
 ## Setup/installation
 

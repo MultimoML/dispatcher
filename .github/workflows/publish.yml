@@ -2,7 +2,7 @@ name: Build a tagged Docker image and publish it
 
 on:
   push:
-    branches: [main]
+    branches: [prod]
     paths-ignore:
       - 'README.md'
       - 'LICENSE'
