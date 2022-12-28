@@ -2,36 +2,25 @@ ver =
 
 all: build
 
-.PHONY: help run build compose build-deploy tag release
+.PHONY: help server run build tag tidy release
 
-help: ## Prints the help menu
+help: ## Print the help menu
 	@echo Usage: make [command]
 	@echo
 	@echo Commands:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort \
 		| awk 'BEGIN {FS = ":.*?## "}; {printf"  \033[36m%-30s\033[0m%s\n", $$1, $$2}'
 
+server: ## Run the microservice locally
+	go run cmd/dispatcher/main.go
 
-run: ## Runs the microservice
-	go run cmd/server/main.go
+run: ## Run the microservice in a container
+	docker run -p 6001:6001 -v $(shell pwd)/.env:/.env -it multimoml/dispatcher:latest
 
-build: tidy ## Builds the Docker image
-    ifeq (, $(shell groups | grep docker))
-		sudo docker build -t multimoml/dispatcher:latest .
-    else
-		docker build -t multimoml/dispatcher:latest .
-    endif
+build: tidy ## Build the Docker image
+	docker build -t multimoml/dispatcher:latest .
 
-compose: ## Deploy the microservice using Docker Compose
-    ifeq (, $(shell groups | grep docker))
-		sudo docker-compose -f docker-compose.yml --env-file .env up -d --force-recreate
-    else
-		docker-compose -f docker-compose.yml --env-file .env up -d --force-recreate
-    endif
-
-build-deploy: build compose ## Builds and deploys the microservice
-
-tag: ## Updates the project version and creates a Git tag with a changelog
+tag: ## Update the project version and create a Git tag with a changelog
     ifndef ver
 		git tag -l
     else

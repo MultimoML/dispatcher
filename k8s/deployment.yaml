@@ -22,6 +22,10 @@ spec:
           value: rso
         - name: DB_HOST
           value: private-prod-f6ec1227.mongo.ondigitalocean.com
+        - name: DB_NAME
+          value: products
+        - name: PORT
+          value: 6001
         - name: DB_PASSWORD
           valueFrom:
             secretKeyRef:

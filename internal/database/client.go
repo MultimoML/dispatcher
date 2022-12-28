@@ -6,13 +6,10 @@ import (
 	"log"
 	"sync"
 
-	"github.com/multimoml/dispatcher/internal/config"
-	"go.mongodb.org/mongo-driver/bson"
-
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 
-	"github.com/multimoml/dispatcher/internal/model"
+	"github.com/multimoml/dispatcher/internal/config"
 )
 
 var dbClient *mongo.Client
@@ -20,11 +17,14 @@ var dbClient *mongo.Client
 func Connect(ctx context.Context, config *config.Config) *mongo.Client {
 	var once sync.Once
 
+	log.Println("Connecting to MongoDB...")
 	once.Do(func() {
 		username := config.DBUsername
 		password := config.DBPassword
 		host := config.DBHost
-		mongoUrl := fmt.Sprintf("mongodb+srv://%s:%s@%s/", username, password, host)
+		database := config.DBName
+		mongoUrl := fmt.Sprintf("mongodb+srv://%s:%s@%s/%s?tls=true&authSource=admin&replicaSet=prod",
+			username, password, host, database)
 
 		client, err := mongo.NewClient(options.Client().ApplyURI(mongoUrl))
 		if err != nil {
@@ -44,20 +44,4 @@ func Connect(ctx context.Context, config *config.Config) *mongo.Client {
 	})
 
 	return dbClient
-}
-
-func Products(ctx context.Context) []model.Product {
-	productCollection := dbClient.Database("products").Collection("spar")
-
-	cursor, err := productCollection.Find(ctx, bson.D{})
-	if err != nil {
-		log.Fatal("Failed to find products in database: ", err)
-	}
-
-	var products []model.Product
-	if err = cursor.All(ctx, &products); err != nil {
-		log.Fatal("Failed to save products into struct: ", err)
-	}
-
-	return products
 }

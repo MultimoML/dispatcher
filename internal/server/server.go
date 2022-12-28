@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -16,20 +17,27 @@ var dbClient *mongo.Client
 
 func Run(ctx context.Context) {
 	// Load environment variables
-	dbConfig := config.LoadConfig()
+	cfg := config.LoadConfig()
 
 	// Connect to MongoDB
-	dbClient = database.Connect(ctx, dbConfig)
+	dbClient = database.Connect(ctx, cfg)
 
-	// Start HTTP server
+	// Set up router
 	router := gin.Default()
 
 	// Endpoints
 	router.GET("/products/live", Liveness)
 	router.GET("/products/ready", Readiness)
-	router.GET("/products/v1/all", AllProducts)
 
-	log.Fatal(router.Run("localhost:6001"))
+	// API v1
+	v1 := router.Group("/products/v1")
+	{
+		v1.GET("/all", Products)
+		v1.GET("/:id", Products)
+	}
+
+	// Start HTTP server
+	log.Fatal(router.Run(fmt.Sprintf(":%s", cfg.Port)))
 }
 
 func Liveness(c *gin.Context) {
@@ -44,6 +52,27 @@ func Readiness(c *gin.Context) {
 	}
 }
 
-func AllProducts(c *gin.Context) {
-	c.IndentedJSON(http.StatusOK, database.Products(context.TODO()))
+func Products(c *gin.Context) {
+	params := parseQuery(c)
+
+	if params.Error != nil {
+		c.IndentedJSON(http.StatusBadRequest, params.Error)
+		return
+	}
+
+	if params.ProductId != "" { // Get product by ID
+		product, err := database.Product(params)
+		if err != nil {
+			c.IndentedJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		} else {
+			c.IndentedJSON(http.StatusOK, product)
+		}
+	} else { // Get all products
+		products, err := database.Products(params)
+		if err != nil {
+			c.IndentedJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		} else {
+			c.IndentedJSON(http.StatusOK, products)
+		}
+	}
 }

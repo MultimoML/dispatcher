@@ -7,6 +7,5 @@ import (
 )
 
 func main() {
-	ctx := context.Background()
-	server.Run(ctx)
+	server.Run(context.Background())
 }

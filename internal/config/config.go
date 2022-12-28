@@ -11,6 +11,8 @@ type Config struct {
 	DBUsername string
 	DBPassword string
 	DBHost     string
+	DBName     string
+	Port       string
 }
 
 func LoadConfig() *Config {
@@ -31,9 +33,16 @@ func LoadConfig() *Config {
 
 	log.Println("Loaded environment variables for", env)
 
+	port := "6001"
+	if os.Getenv("PORT") != "" {
+		port = os.Getenv("PORT")
+	}
+
 	return &Config{
 		DBUsername: os.Getenv("DB_USERNAME"),
 		DBPassword: os.Getenv("DB_PASSWORD"),
 		DBHost:     os.Getenv("DB_HOST"),
+		DBName:     os.Getenv("DB_NAME"),
+		Port:       port,
 	}
 }
