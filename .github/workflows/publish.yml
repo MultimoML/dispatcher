@@ -3,6 +3,11 @@ name: Build a tagged Docker image and publish it
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - 'README.md'
+      - 'LICENSE'
+      - 'Makefile'
+      - '.gitignore'
 
 jobs:
   build:
