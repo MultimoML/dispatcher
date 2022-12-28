@@ -26,7 +26,7 @@ func Products(params *model.QueryParameters) ([]model.Product, error) {
 	}
 
 	// Set depth options (default is Full, needs no projection)
-	switch params.Depth {
+	switch params.History {
 	case model.None:
 		findOptions.SetProjection(bson.D{{"price-in-time", 0}})
 	case model.Last:
@@ -36,14 +36,14 @@ func Products(params *model.QueryParameters) ([]model.Product, error) {
 	// Set sort options
 	if params.SortBy != model.Default {
 		sortBy := model.MapQueryParamToDbField(params.SortBy)
-		findOptions.SetSort(bson.D{{sortBy, params.SortDirection}})
+		findOptions.SetSort(bson.D{{sortBy, params.SortOrder}})
 	}
 
 	// Set filter options
 	var filter bson.M
-	if params.Filter != "" {
+	if params.Category != "" {
 		category := model.MapQueryParamToDbField(model.Category)
-		filter = bson.M{category: params.Filter}
+		filter = bson.M{category: params.Category}
 	}
 
 	// Execute query
@@ -70,7 +70,7 @@ func Product(params *model.QueryParameters) (model.Product, error) {
 	findOptions := options.FindOne()
 
 	// Set depth options (default is Full, needs no projection)
-	switch params.Depth {
+	switch params.History {
 	case model.None:
 		findOptions.SetProjection(bson.D{{"price-in-time", 0}})
 	case model.Last:

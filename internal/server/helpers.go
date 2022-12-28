@@ -14,10 +14,10 @@ func parseQuery(c *gin.Context) (params *model.QueryParameters) {
 	// Get query parameters
 	reqLimit := c.DefaultQuery("limit", "-1")
 	reqOffset := c.DefaultQuery("offset", "0")
-	reqDepth := c.DefaultQuery("depth", "last")
-	reqSortDirection := c.DefaultQuery("sortDirection", "asc")
-	reqSort := c.DefaultQuery("sortBy", "")
-	reqFilter := c.DefaultQuery("filter", "")
+	reqHistory := c.DefaultQuery("history", "last")
+	reqSortDirection := c.DefaultQuery("order", "asc")
+	reqSort := c.DefaultQuery("sort", "")
+	reqCategory := c.DefaultQuery("category", "")
 
 	// Check parameter validity
 	if val, err := strconv.Atoi(reqLimit); err != nil || (val < 0 && val != -1) {
@@ -34,28 +34,28 @@ func parseQuery(c *gin.Context) (params *model.QueryParameters) {
 		params.Offset = val
 	}
 
-	if val, ok := model.Depths()[reqDepth]; !ok {
+	if val, ok := model.ResultHistory()[reqHistory]; !ok {
 		params.Error = gin.H{"error": "Invalid depth"}
 		return
 	} else {
-		params.Depth = val
+		params.History = val
 	}
 
-	if val, ok := model.Directions()[reqSortDirection]; !ok {
+	if val, ok := model.SortOrders()[reqSortDirection]; !ok {
 		params.Error = gin.H{"error": "Invalid sort direction"}
 		return
 	} else {
-		params.SortDirection = val
+		params.SortOrder = val
 	}
 
-	if _, ok := model.Sorts()[reqSort]; !ok {
+	if _, ok := model.SortableBy()[reqSort]; !ok {
 		params.Error = gin.H{"error": "Invalid sort parameter"}
 		return
 	} else {
 		params.SortBy = model.SortBy(reqSort)
 	}
 
-	params.Filter = reqFilter
+	params.Category = reqCategory
 	params.ProductId = c.Param("id")
 
 	return
