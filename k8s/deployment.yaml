@@ -17,17 +17,17 @@ spec:
         image: dispatcher:latest
         env:
         - name: ACTIVE_ENV
-          value: prod
+          value: "prod"
         - name: DB_USERNAME
-          value: rso
+          value: "rso"
         - name: DB_HOST
-          value: private-prod-f6ec1227.mongo.ondigitalocean.com
+          value: "private-prod-f6ec1227.mongo.ondigitalocean.com"
         - name: DB_NAME
-          value: products
+          value: "products"
         - name: PORT
-          value: 6001
+          value: "6001"
         - name: DB_PASSWORD
-          value: <DB_PASSWORD>
+          value: "<DB_PASSWORD>"
         ports:
         - containerPort: 6001
           name: server
