@@ -4,29 +4,6 @@ import "go.mongodb.org/mongo-driver/bson/primitive"
 
 type Products []Product
 
-// SortableBy returns a map of all the available sort options
-func SortableBy() map[string]SortBy {
-	return map[string]SortBy{
-		"":         Default,
-		"name":     Name,
-		"price":    Price,
-		"category": Category,
-	}
-}
-
-func MapQueryParamToDbField(param SortBy) string {
-	switch param {
-	case "name":
-		return "name"
-	case "price":
-		return "price-in-time.price"
-	case "category":
-		return "category.name"
-	default:
-		return ""
-	}
-}
-
 type PriceInTime struct {
 	Timestamp          primitive.DateTime `json:"timestamp" bson:"timestamp" validate:"required"`
 	IsOnPromotion      bool               `json:"is-on-promotion" bson:"is-on-promotion" validate:"required"`

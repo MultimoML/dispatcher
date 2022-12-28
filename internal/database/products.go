@@ -25,9 +25,12 @@ func Products(params *model.QueryParameters) ([]model.Product, error) {
 		findOptions.SetSkip(int64(params.Offset))
 	}
 
-	// If full is false, don't return PriceInTime array elements
-	if !params.Full {
+	// Set depth options (default is Full, needs no projection)
+	switch params.Depth {
+	case model.None:
 		findOptions.SetProjection(bson.D{{"price-in-time", 0}})
+	case model.Last:
+		findOptions.SetProjection(bson.D{{"price-in-time", bson.D{{"$slice", -1}}}})
 	}
 
 	// Set sort options
@@ -64,10 +67,14 @@ func Product(params *model.QueryParameters) (model.Product, error) {
 	ctx := context.TODO()
 	productCollection := dbClient.Database("products").Collection("spar")
 
-	// Set up query options
 	findOptions := options.FindOne()
-	if !params.Full {
+
+	// Set depth options (default is Full, needs no projection)
+	switch params.Depth {
+	case model.None:
 		findOptions.SetProjection(bson.D{{"price-in-time", 0}})
+	case model.Last:
+		findOptions.SetProjection(bson.D{{"price-in-time", bson.D{{"$slice", -1}}}})
 	}
 
 	// Execute query
