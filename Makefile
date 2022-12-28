@@ -41,4 +41,5 @@ tidy: ## Update dependencies
 	go mod tidy
 
 release: tag ## Create a new release and push it
-	git push --follow-tags
+	git rebase prod main
+	git push --all main prod

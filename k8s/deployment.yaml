@@ -27,10 +27,7 @@ spec:
         - name: PORT
           value: 6001
         - name: DB_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: db-password
-              key: DB_PASSWORD
+          value: <DB_PASSWORD>
         ports:
         - containerPort: 6001
           name: server
@@ -59,5 +56,5 @@ spec:
   ports:
   - port: 6001
     targetPort: server
-selector:
-  app: dispatcher
+  selector:
+    app: dispatcher
