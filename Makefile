@@ -41,5 +41,5 @@ tidy: ## Update dependencies
 	go mod tidy
 
 release: tag ## Create a new release and push it
-	git rebase prod main
-	git push --all main prod
+	git fetch . main:prod
+	git push --follow-tags origin main prod
