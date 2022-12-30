@@ -1,0 +1,5 @@
+Release v1.0.15
+
+Changelog:
+  - Add OpenAPI docs
+  - Update configs and logic
