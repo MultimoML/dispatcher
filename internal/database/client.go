@@ -19,12 +19,8 @@ func Connect(ctx context.Context, config *config.Config) *mongo.Client {
 
 	log.Println("Connecting to MongoDB...")
 	once.Do(func() {
-		username := config.DBUsername
-		password := config.DBPassword
-		host := config.DBHost
-		database := config.DBName
 		mongoUrl := fmt.Sprintf("mongodb+srv://%s:%s@%s/%s?tls=true&authSource=admin&replicaSet=prod",
-			username, password, host, database)
+			config.DBUsername, config.DBPassword, config.DBHost, config.DBName)
 
 		client, err := mongo.NewClient(options.Client().ApplyURI(mongoUrl))
 		if err != nil {

@@ -29,11 +29,10 @@ func Run(ctx context.Context) {
 	router.GET("/products/live", Liveness)
 	router.GET("/products/ready", Readiness)
 
-	// API v1
 	v1 := router.Group("/products/v1")
 	{
 		v1.GET("/all", Products)
-		v1.GET("/:id", Products)
+		v1.GET("/:id", Product)
 	}
 
 	// Start HTTP server
@@ -54,25 +53,30 @@ func Readiness(c *gin.Context) {
 
 func Products(c *gin.Context) {
 	params := parseQuery(c)
-
 	if params.Error != nil {
 		c.IndentedJSON(http.StatusBadRequest, params.Error)
 		return
 	}
 
-	if params.ProductId != "" { // Get product by ID
-		product, err := database.Product(params)
-		if err != nil {
-			c.IndentedJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		} else {
-			c.IndentedJSON(http.StatusOK, product)
-		}
-	} else { // Get all products
-		products, err := database.Products(params)
-		if err != nil {
-			c.IndentedJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		} else {
-			c.IndentedJSON(http.StatusOK, products)
-		}
+	products, err := database.Products(params)
+	if err != nil {
+		c.IndentedJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	} else {
+		c.IndentedJSON(http.StatusOK, products)
+	}
+}
+
+func Product(c *gin.Context) {
+	params := parseQuery(c)
+	if params.Error != nil {
+		c.IndentedJSON(http.StatusBadRequest, params.Error)
+		return
+	}
+
+	product, err := database.Product(params)
+	if err != nil {
+		c.IndentedJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	} else {
+		c.IndentedJSON(http.StatusOK, product)
 	}
 }

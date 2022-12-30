@@ -7,7 +7,7 @@ RUN go mod download && go mod verify
 
 COPY . .
 
-RUN CGO_ENABLED=0 go build -o /dispatcher cmd/dispatcher/main.go
+RUN CGO_ENABLED=0 go build -o /dispatcher main.go
 
 FROM gcr.io/distroless/static-debian11:latest
 

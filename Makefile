@@ -12,7 +12,7 @@ help: ## Print the help menu
 		| awk 'BEGIN {FS = ":.*?## "}; {printf"  \033[36m%-30s\033[0m%s\n", $$1, $$2}'
 
 server: ## Run the microservice locally
-	go run cmd/dispatcher/main.go
+	go run main.go
 
 run: build ## Run the microservice in a container
 	docker run -p 6001:6001 -v $(shell pwd)/.env:/.env -d ghcr.io/multimoml/dispatcher:latest
@@ -24,7 +24,7 @@ push: build ## Manually push the Docker image
 	docker push ghcr.io/multimoml/dispatcher:latest
 
 deploy: push ## Manually deploy the microservice to the Kubernetes cluster
-	kubectl apply -f k8s/deployment.yaml
+	kubectl apply -f k8s/deployment.yml
 
 tag: ## Update the project version and create a Git tag with a changelog
     ifndef ver

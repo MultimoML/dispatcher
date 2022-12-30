@@ -1,4 +1,4 @@
-name: Build a tagged Docker image and publish it
+name: Microservice deployment pipeline
 
 on:
   push:
@@ -36,13 +36,13 @@ jobs:
           token: ${{ secrets.DO_ACCESS_TOKEN }}
 
       - name: Set k8s deployment database password from Github secrets
-        run: sed -i "s/<DB_PASSWORD>/${{ secrets.DB_PASSWORD }}/g" k8s/deployment.yaml
+        run: sed -i "s/<DB_PASSWORD>/${{ secrets.DB_PASSWORD }}/g" k8s/deployment.yml
 
       - name: Save DigitalOcean kubeconfig with short-lived credentials
         run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 prod
 
       - name: Deploy to DigitalOcean Kubernetes
-        run: kubectl apply -f k8s/deployment.yaml
+        run: kubectl apply -f k8s/deployment.yml
 
       - name: Verify deployment
         run: kubectl rollout status deployment/dispatcher
