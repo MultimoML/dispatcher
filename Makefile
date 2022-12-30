@@ -12,6 +12,7 @@ help: ## Print the help menu
 		| awk 'BEGIN {FS = ":.*?## "}; {printf"  \033[36m%-30s\033[0m%s\n", $$1, $$2}'
 
 server: ## Run the microservice locally
+	swag init
 	go run main.go
 
 run: build ## Run the microservice in a container

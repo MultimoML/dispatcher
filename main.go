@@ -9,6 +9,10 @@ import (
 	"github.com/multimoml/dispatcher/internal/server"
 )
 
+// @title Dispatcher API
+// @version 1.0.0
+// @host localhost:6001
+// @BasePath /products
 func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 
