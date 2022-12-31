@@ -128,6 +128,8 @@ func Product(c *gin.Context) {
 		return
 	}
 
+	log.Println(params)
+
 	product, err := database.Product(params)
 	if err != nil {
 		c.String(http.StatusInternalServerError, err.Error())

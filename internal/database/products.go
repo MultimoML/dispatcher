@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 
@@ -79,7 +80,13 @@ func Product(params *model.QueryParameters) (model.Product, error) {
 
 	// Execute query
 	var product model.Product
-	res := productCollection.FindOne(ctx, bson.D{{"_id", params.ProductId}}, findOptions)
+	id, err := primitive.ObjectIDFromHex(params.ProductId)
+	if err != nil {
+		log.Println("Invalid product id: ", err)
+		return product, err
+	}
+
+	res := productCollection.FindOne(ctx, bson.D{{"_id", id}}, findOptions)
 
 	// If error is ErrNoDocuments, return empty product
 	if res.Err() == mongo.ErrNoDocuments {
