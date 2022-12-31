@@ -28,6 +28,8 @@ spec:
           value: "6001"
         - name: DB_PASSWORD
           value: "<DB_PASSWORD>"
+        - name: CONFIG_SERVER
+          value: "https://configs.multimo.ml"
         ports:
         - containerPort: 6001
           name: server
@@ -44,6 +46,13 @@ spec:
             port: server
           initialDelaySeconds: 10
           periodSeconds: 3
+      metrics:
+        - type: Resource
+          resource:
+            name: cpu
+            target:
+              type: Utilization
+              averageUtilization: 50
       terminationGracePeriodSeconds: 10
 
 ---

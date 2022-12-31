@@ -21,35 +21,35 @@ func parseQuery(c *gin.Context) (params *model.QueryParameters) {
 
 	// Check parameter validity
 	if val, err := strconv.Atoi(reqLimit); err != nil || (val < 0 && val != -1) {
-		params.Error = gin.H{"error": "Invalid limit"}
+		params.Error = "Invalid limit"
 		return
 	} else {
 		params.Limit = val
 	}
 
 	if val, err := strconv.Atoi(reqOffset); err != nil || val < 0 {
-		params.Error = gin.H{"error": "Invalid offset"}
+		params.Error = "Invalid offset"
 		return
 	} else {
 		params.Offset = val
 	}
 
 	if val, ok := model.ResultHistory()[reqHistory]; !ok {
-		params.Error = gin.H{"error": "Invalid depth"}
+		params.Error = "Invalid history depth"
 		return
 	} else {
 		params.History = val
 	}
 
 	if val, ok := model.SortOrders()[reqSortDirection]; !ok {
-		params.Error = gin.H{"error": "Invalid sort direction"}
+		params.Error = "Invalid sort order"
 		return
 	} else {
 		params.SortOrder = val
 	}
 
 	if _, ok := model.SortableBy()[reqSort]; !ok {
-		params.Error = gin.H{"error": "Invalid sort parameter"}
+		params.Error = "Invalid sort field"
 		return
 	} else {
 		params.SortBy = model.SortBy(reqSort)

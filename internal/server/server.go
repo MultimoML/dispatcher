@@ -17,39 +17,43 @@ import (
 )
 
 var dbClient *mongo.Client
+var sConfig *config.Config
 
 func Run(ctx context.Context) {
 	// Load environment variables
-	cfg := config.LoadConfig()
+	sConfig = config.LoadConfig()
 
 	// Connect to MongoDB
-	dbClient = database.Connect(ctx, cfg)
+	dbClient = database.Connect(ctx, sConfig)
 
 	// Set up router
 	router := gin.Default()
 
 	// Endpoints
-	router.GET("/products/live", Liveness)
-	router.GET("/products/ready", Readiness)
-
-	// Redirect /products and /products/openapi to /products/openapi/index.html
-	router.GET("/products", func(c *gin.Context) {
-		c.Redirect(http.StatusMovedPermanently, "/products/openapi/index.html")
-	})
-	router.GET("/products/openapi", func(c *gin.Context) {
-		c.Redirect(http.StatusMovedPermanently, "/products/openapi/index.html")
-	})
-
-	router.GET("/products/openapi/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-
-	v1 := router.Group("/products/v1")
+	p := router.Group("/products")
 	{
-		v1.GET("/all", Products)
-		v1.GET("/:id", Product)
+		p.GET("/live", Liveness)
+		p.GET("/ready", Readiness)
+
+		p.GET("/openapi", func(c *gin.Context) {
+			c.Redirect(http.StatusMovedPermanently, "/products/openapi/index.html")
+		})
+
+		p.GET("/", func(c *gin.Context) {
+			c.Redirect(http.StatusMovedPermanently, "/products/openapi/index.html")
+		})
+
+		p.GET("/openapi/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
+		v1 := p.Group("/v1")
+		{
+			v1.GET("/all", Products)
+			v1.GET("/:id", Product)
+		}
 	}
 
 	// Start HTTP server
-	log.Fatal(router.Run(fmt.Sprintf(":%s", cfg.Port)))
+	log.Fatal(router.Run(fmt.Sprintf(":%s", sConfig.Port)))
 }
 
 // Liveness is a simple endpoint to check if the server is alive
@@ -59,7 +63,13 @@ func Run(ctx context.Context) {
 // @Success 200 {string} string
 // @Router /live [get]
 func Liveness(c *gin.Context) {
-	c.IndentedJSON(http.StatusOK, gin.H{"status": "alive"})
+	// Check if the config value 'broken' is set to 1
+	if val, err := GetConfig("broken"); err == nil && val == "1" {
+		c.String(http.StatusServiceUnavailable, "dead")
+		return
+	}
+
+	c.String(http.StatusOK, "alive")
 }
 
 // Readiness is a simple endpoint to check if the server is ready
@@ -71,9 +81,9 @@ func Liveness(c *gin.Context) {
 // @Router /ready [get]
 func Readiness(c *gin.Context) {
 	if err := dbClient.Ping(context.TODO(), nil); err != nil {
-		c.IndentedJSON(http.StatusServiceUnavailable, gin.H{"status": "not ready"})
+		c.String(http.StatusServiceUnavailable, "not ready")
 	} else {
-		c.IndentedJSON(http.StatusOK, gin.H{"status": "ready"})
+		c.String(http.StatusOK, "ready")
 	}
 }
 
@@ -88,14 +98,14 @@ func Readiness(c *gin.Context) {
 // @Router /v1/all [get]
 func Products(c *gin.Context) {
 	params := parseQuery(c)
-	if params.Error != nil {
-		c.IndentedJSON(http.StatusBadRequest, params.Error)
+	if params.Error != "" {
+		c.String(http.StatusBadRequest, params.Error)
 		return
 	}
 
 	products, err := database.Products(params)
 	if err != nil {
-		c.IndentedJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.String(http.StatusInternalServerError, err.Error())
 	} else {
 		c.IndentedJSON(http.StatusOK, products)
 	}
@@ -113,14 +123,14 @@ func Products(c *gin.Context) {
 // @Router /v1/{id} [get]
 func Product(c *gin.Context) {
 	params := parseQuery(c)
-	if params.Error != nil {
-		c.IndentedJSON(http.StatusBadRequest, params.Error)
+	if params.Error != "" {
+		c.String(http.StatusBadRequest, params.Error)
 		return
 	}
 
 	product, err := database.Product(params)
 	if err != nil {
-		c.IndentedJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.String(http.StatusInternalServerError, err.Error())
 	} else {
 		c.IndentedJSON(http.StatusOK, product)
 	}

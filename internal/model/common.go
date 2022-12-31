@@ -1,7 +1,5 @@
 package model
 
-import "github.com/gin-gonic/gin"
-
 type SortBy string
 type SortOrder int
 type History int
@@ -14,7 +12,7 @@ type QueryParameters struct {
 	SortOrder SortOrder
 	SortBy    SortBy
 	Category  string
-	Error     gin.H
+	Error     string
 }
 
 const (
