@@ -1,0 +1,4 @@
+Release v1.1.2
+
+Changelog:
+  - Update db details
