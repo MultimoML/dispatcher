@@ -30,8 +30,6 @@ spec:
         - name: CONFIG_SERVER
           value: "http://multimo.dedyn.io"
         - name: CONFIG_SERVER_PORT
-          value: "30000"
-        - name: CONFIG_SERVER_PORT_GRPC
           value: "30001"
         ports:
         - containerPort: 6001
