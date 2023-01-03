@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"fmt"
 	"log"
 
 	"google.golang.org/grpc"
@@ -11,7 +12,8 @@ import (
 )
 
 func GetConfig(key string) (string, error) {
-	conn, err := grpc.Dial(sConfig.ConfigServer, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpc.Dial(fmt.Sprintf("%s:%s", sConfig.ConfigServer, sConfig.ConfigServerPort),
+		grpc.WithTransportCredentials(insecure.NewCredentials()))
 	log.Println("Connecting to config server at", sConfig.ConfigServer)
 
 	if err != nil {
