@@ -16,7 +16,7 @@ var dbClient *mongo.Client
 func Connect(ctx context.Context, config *config.Config) *mongo.Client {
 	var once sync.Once
 
-	log.Println("Connecting to MongoDB...")
+	log.Println("Connecting to MongoDB")
 	once.Do(func() {
 		client, err := mongo.NewClient(options.Client().ApplyURI(config.DBConnection))
 		if err != nil {

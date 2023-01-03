@@ -39,13 +39,13 @@ spec:
           httpGet:
             path: /products/live
             port: server
-          initialDelaySeconds: 10
+          initialDelaySeconds: 30
           periodSeconds: 3
         readinessProbe:
           httpGet:
             path: /products/ready
             port: server
-          initialDelaySeconds: 10
+          initialDelaySeconds: 30
           periodSeconds: 3
 
 ---
