@@ -2,7 +2,6 @@ package database
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"sync"
 
@@ -19,10 +18,7 @@ func Connect(ctx context.Context, config *config.Config) *mongo.Client {
 
 	log.Println("Connecting to MongoDB...")
 	once.Do(func() {
-		mongoUrl := fmt.Sprintf("mongodb+srv://%s:%s@%s/%s?tls=true&authSource=admin&replicaSet=prod",
-			config.DBUsername, config.DBPassword, config.DBHost, config.DBName)
-
-		client, err := mongo.NewClient(options.Client().ApplyURI(mongoUrl))
+		client, err := mongo.NewClient(options.Client().ApplyURI(config.DBConnection))
 		if err != nil {
 			log.Fatal(err)
 		}
