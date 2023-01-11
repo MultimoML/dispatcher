@@ -12,7 +12,8 @@ services:
     ports:
       - "6001:6001"
     environment:
-      ACTIVE_ENV: "prod"
+      ENVIRONMENT: prod
+      DOMAIN: multimo.ml
       DB_CONNECTION_STRING: ${DB_CONNECTION_STRING}
       DB_NAME: products
       CONFIG_SERVER: http://multimo.dedyn.io
