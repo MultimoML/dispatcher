@@ -2,8 +2,8 @@ version: '3'
 
 services:
 
-  qr-generator:
-    image: multimoml/dispatcher:latest
+  dispatcher:
+    build: .
     container_name: dispatcher
     restart: unless-stopped
     networks:
