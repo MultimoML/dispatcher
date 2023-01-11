@@ -3,7 +3,7 @@ version: '3'
 services:
 
   dispatcher:
-    image: ghcr.io/multimoml/dispatcher:latest
+    build: .
     container_name: dispatcher
     restart: unless-stopped
     networks:
